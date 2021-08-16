@@ -4,7 +4,7 @@
 		@touchstart="touchHandle"
 		@touchcancel="removeHandle"
 		@touchend="removeHandle"
-		:disabled="disabled" 
+		:disabled="loading || disabled" 
 		:hover-class="getBtnHoverClass" 
 		:class="getBtnClass"
 		:loading="loading"
@@ -29,8 +29,8 @@
 </template>
 
 <script>
-	import { computed,toRefs,ref } from "vue"
-	import {useState} from "../libs/useState.js";
+	import { computed,toRefs,ref,watch } from "vue"
+	import { useState } from "../libs/useState.js"
 	/**
 	 * YButton 按钮
 	 * @description 这是一个自定义的按钮的样式
@@ -46,6 +46,7 @@
 	 * 	@value warning 黄色
 	 * 	@value error 红色
 	 * @property {Boolean} disabled 是否禁用按钮 
+	 * @property {String} hover-class 选中的状态 
 	 * @property {Boolean} loading 名称前是否带 loading 图标
 	 * @property {String} form-type	 = [submit|reset] 用于 <form> 组件，点击分别会触发 <form> 组件的 submit/reset 事件
 	 * 	@value submit 表单提交
@@ -123,7 +124,7 @@
 			},
 			sendMessageTitle:{
 				type:String,
-				default:"当前标题	"
+				default:"当前标题"
 			},
 			sendMessagePath:{
 				type:String,
@@ -136,10 +137,15 @@
 			showMessageCard:{
 				type:Boolean,
 				default:false
+			},
+			hoverClass:{
+				type:String,
+				default:""
 			}
 		},
 		setup(props){
-			const translation = ref("");
+			// 定制波纹的样式
+			const waveClass = ref("");
 			// 定制当前的样式
 			const getBtnClass = computed(()=>{
 				const classStyle = [];
@@ -167,16 +173,19 @@
 						
 				}
 				// 控制按钮的动态的样式
-				if(translation.value){
+				if(waveClass.value){
 					// 写入当前的样式
-					console.log("控制显示的样式");
-					classStyle.push(translation.value);
+					classStyle.push(waveClass.value);
 				}
 				return classStyle.join(' ');
 			})
 			// 定制当前hover的样式
 			const getBtnHoverClass = computed(()=>{
 				const classStyle = [];
+				// 判断当前是否存在需要设置的hoverClass，如果自己设置了hoverClass我们的均需要进行失效的处理
+				if(props.hoverClass){
+					return props.hoverClass;
+				}
 				switch(props.type){
 					case "primary":
 					case "error":
@@ -191,16 +200,13 @@
 				}
 				return classStyle.join(' ');
 			})
-			// 定义当前的状态
-			const [active,setActive] = useState(false); 
-			
+			// 按下的事件
 			const touchHandle = () =>{
 				console.log("按下的状态");
-				setActive(true);
 			}
-			const removeHandle = (e) =>{
-				console.log("移开手指");
-				setActive(false);
+			// 抬起的事件
+			const removeHandle = (e) => {
+				console.log("移开手指后的事件");
 			}
 			return{
 				touchHandle,
@@ -244,6 +250,7 @@ button{
 	background-color: $y-gray-3;
 	color: $y-gray-6;
 }
+
 /**
  * 正常的按钮
  */
@@ -258,6 +265,7 @@ button{
 	background-color: $y-color-primary-disabled;
 	color: $y-gray-2;
 }
+
 /**
  * 错误按钮
  */

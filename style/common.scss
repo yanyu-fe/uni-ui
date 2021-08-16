@@ -59,6 +59,11 @@ $y-shadow-1-up: 0 -1rpx 2rpx -2rpx rgba(#000,.16),0 -3rpx 6rpx 0 rgba(#000,.12),
 $y-shadow-1-down: 0 1rpx 2rpx -2rpx rgba(#000,.16),0 3rpx 6rpx 0 rgba(#000,.12),0 5rpx 12rpx 4rpx rgba(#000,.09);
 $y-shadow-1-left: -1rpx 0 2rpx -2rpx rgba(#000,.16),-3rpx 0 6rpx 0 rgba(#000,.12),-5rpx 0 12rpx 4rpx rgba(#000,.09);
 $y-shadow-1-right:  1rpx 0 2rpx -2rpx rgba(#000,.16),3rpx 0 6rpx 0 rgba(#000,.12),5rpx 0 12rpx 4rpx rgba(#000,.09);
+
+@mixin y-shadow-default($color:#000) {
+	box-shadow: 0 0 2rpx -2rpx rgba($color,0.5),0 0 6rpx 0 rgba($color,0.4),0 0 12rpx 4rpx rgba($color,0.3);
+}
+
 @mixin y-shadow-1($color:#000,$dir:Down) {
 	@if ($dir == Up) {
 		box-shadow: 0 -1rpx 2rpx -2rpx rgba($color,.16),0 -3rpx 6rpx 0 rgba($color,.12),0 -5rpx 12rpx 4rpx rgba($color,.09);

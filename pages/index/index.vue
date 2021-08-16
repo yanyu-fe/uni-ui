@@ -1,6 +1,6 @@
 <template>
 	<view class="title">
-		<y-button @longpress="myUserInfo">{{title}}</y-button>
+		<y-button >{{title}}</y-button>
 	</view>
 </template>
 
@@ -10,12 +10,8 @@
 	export default {
 		setup(){
 			const title = ref("测试");
-			const myUserInfo = () =>{
-				console.log("长按事件");
-			}
 			return {
-				title,
-				myUserInfo
+				title
 			}
 		}
 	};
