@@ -1,6 +1,7 @@
 <template>
 	<view class="title">
 		<y-button >{{title}}</y-button>
+		<y-icon size="150" color="blue" name="CodeSandbox"></y-icon>
 	</view>
 </template>
 
