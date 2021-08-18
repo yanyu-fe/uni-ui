@@ -1,7 +1,6 @@
 <template>
 	<view class="title">
-		<y-button >{{title}}</y-button>
-		<y-icon size="150" color="blue" name="CodeSandbox"></y-icon>
+		<y-image @click="clickHandle" src="https://img0.baidu.com/it/u=3311900507,1448170316&fm=26&fmt=auto&gp=0.jpg"></y-image>
 	</view>
 </template>
 
@@ -11,7 +10,11 @@
 	export default {
 		setup(){
 			const title = ref("测试");
+			const clickHandle = (e) =>{
+				console.log("撒大声地所");
+			}
 			return {
+				clickHandle,
 				title
 			}
 		}
@@ -21,5 +24,6 @@
 <style lang="scss" scoped>
 	.title{
 		padding: 20rpx;
+		background-color: $y-color-primary;
 	}
 </style>
