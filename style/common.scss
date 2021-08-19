@@ -186,3 +186,28 @@ $y-line-height-10:76rpx;
 		.y-pb-#{$i}{padding-bottom: 10rpx*$i;}
 	}
 }
+
+@keyframes skeletonBreath {
+	0%{
+		opacity: 0.5;
+	}
+	50%{
+		opacity: 1;
+	}
+	100%{
+		opacity: 0.5;
+	}
+}
+
+.y-skeleton{
+	// 名称
+	animation-name: skeletonBreath;
+	// 时间
+	animation-duration: 1.5s;
+	// 函数
+	animation-timing-function: linear;
+	// 次数
+	animation-iteration-count: infinite;
+	background-color: $y-gray-4;
+
+}

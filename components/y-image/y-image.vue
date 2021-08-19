@@ -1,6 +1,7 @@
 <template>
-	<view>
-		<image 
+	<view :style="getBgStyle" :class="getBgClass">
+		<image
+			:style="getStyle"
 			:src="src" 
 			:mode="mode" 
 			:webp="webp" 
@@ -9,6 +10,7 @@
 			@longpress="$emit('longpress',$event)"
 			@load="loadImage"
 			@error="loadError"
+			:lazy-load="lazyLoad"
 		></image>
 	</view>
 </template>
@@ -40,9 +42,10 @@
 	 * @property {Boolean} webp 默认不解析 webP 格式，只支持网络资源
 	 * @property {Boolean} show-menu-by-longpress 开启长按图片显示识别小程序码菜单
 	 * @property {Boolean} draggable 鼠标长按是否能拖动图片H5
-	 * @property {Boolean} lazy-load 是否开启懒加载，如果开启懒加载，请先配置好对应的宽高，懒加载才能生效
+	 * @property {Boolean} lazy-load 图片懒加载。只针对page与scroll-view下的image有效
 	 * @property {Number} height 高度，仅支持数字设置了高度，会自动计算对应的宽度mode失效 -1为默认
 	 * @property {Number} width 宽度，仅支持数字设置了宽度，会自动计算对应的高度mode配置失效 -1为默认
+	 * @property {Boolean} skeleton 图片未加载成功，显示加载骨架，如果开启骨架屏且没配置宽度和高度默认骨架屏不生效
 	 * @event {Function} click 点击事件
 	 * @event {Function} longpress 长按事件
 	 */
@@ -84,6 +87,18 @@
 			width:{
 				type:Number,
 				default:-1
+			},
+			customStyle:{
+				type:Object,
+				default:()=>{}
+			},
+			imageStyle:{
+				type:Object,
+				default:()=>{}
+			},
+			skeleton:{
+				type:Boolean,
+				default:false
 			}
 		},
 		emits:['click','longpress'],
@@ -95,11 +110,18 @@
 			});
 			// 图片的点击事件
 			const imageClick = (event) => {
+				// 抛出事件
 				emit("click",event);
 			}
+			const imageState = {
+				LOADING:1,
+				SUCCESS:2,
+				FAIL:3
+			};
+			const imageLoadingState = ref(imageState.LOADING);
+			
 			// 加载图片
 			const loadImage = (event) =>{
-				console.log(event);
 				// 拿到当前的宽度和高度
 				const { width,height } = event.detail;
 				// 拿到宽高比
@@ -116,10 +138,13 @@
 					imgInfo.width = props.width
 					imgInfo.height = parseFloat((rateHW * props.width).toFixed(5));
 				}
+				// 其他情况不进行计算
+				imageLoadingState.value = imageState.SUCCESS;
 			}
 			// 图片加载失败
-			const loadError = (event)=>{
+			const loadError = (event) => {
 				console.log("图片加载失败");
+				imageLoadingState.value = imageState.FAIL;
 			}
 			
 			// 根据当前的属性设置样式
@@ -136,11 +161,32 @@
 					objStyle.height = imgInfo.height + 'rpx';
 					objStyle.width = imgInfo.width + 'rpx';
 				}
-				
-				return useStyleFormat(objStyle);
+				return useStyleFormat({...objStyle,...props.imageStyle});
 			})
 			
+			// 获取对外层的宽度和高度
+			const getBgStyle = computed(() => {
+				const objectStyle = {};
+				if(props.height!==-1 && props.width !== -1){
+					// 判断当前的数据
+					objectStyle.height = props.height + 'rpx';
+					objectStyle.width = props.width  + 'rpx';
+				}
+				return useStyleFormat({...objectStyle,...props.customStyle});
+			})
+			
+			const getBgClass = computed(() => {
+				const classInfo = [];
+				// 是否加载骨架屏
+				if(props.skeleton && imageLoadingState.value === imageState.LOADING){
+					classInfo.push('y-skeleton');
+				}
+				return classInfo.join(' ');
+			})
 			return{
+				getBgClass,
+				getBgStyle,
+				getStyle,
 				loadError,
 				loadImage,
 				imageClick,
@@ -150,6 +196,6 @@
 	}
 </script>
 
-<style lang="scss">
-
+<style lang="scss" scoped>
+@import "~@/style/common.scss";
 </style>

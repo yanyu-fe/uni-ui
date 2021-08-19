@@ -74,5 +74,6 @@
 </script>
 
 <style lang="scss" scoped>
+	@import "~@/style/common.scss";
 	@import "../fonts/iconfont.css";
 </style>
